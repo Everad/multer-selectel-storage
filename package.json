@@ -1,0 +1,14 @@
+{
+  "name": "multer-selectel-storage",
+  "version": "1.0.0",
+  "description": "Multer storage for selectel CDN",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Egor Gumenyuk <boo1ean0807@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "node-selectel-manager": "0.0.11"
+  }
+}
