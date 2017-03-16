@@ -8,37 +8,41 @@ function Storage (opts) {
 	assert(this.opts.login, 'login is required');
 	assert(this.opts.password, 'password is required');
 	assert(this.opts.container, 'container is required');
+	
+	this.manager = selectelManager(this.opts);
 }
 
 Storage.prototype._handleFile = function _handleFile (req, file, cb) {
 	var cdnContainer = this.opts.container;
 	var generateFilename = this.opts.generateFilename || generateDefaultFilename;
 	var baseUrl = this.opts.baseUrl;
+	var chunks = [];
+	var self = this;
 
-	selectelManager.authorize(this.opts.login, this.opts.password, function (err) {
-		if (err) {
-			return cb(err);
-		}
+	file.stream.on('error', cb);
 
-		var chunks = [];
+	file.stream.on('data', function readChunk (chunk) {
+		chunks.push(chunk);
+	});
 
-		file.stream.on('error', console.log.bind(console));
-
-		file.stream.on('data', function readChunk (chunk) {
-			chunks.push(chunk);
-		});
-
-		file.stream.on('end', function uploadToCDN () {
-			var content = Buffer.concat(chunks);
-			var filename = generateFilename(file, req);
-
-			selectelManager.uploadFileByContent(content, path.join(cdnContainer, filename), function onUploadFinished (err, result) {
-				cb(err, {
+	file.stream.on('end', function uploadToCDN () {
+		var content = Buffer.concat(chunks);
+		var filename = generateFilename(file, req);
+		self.manager.uploadFile(content, path.join(cdnContainer, filename))
+			.then(function () {
+				var res = {
 					path: baseUrl + filename,
 					size: content.length
-				});
-			});
-		})
+				};
+				if (!self.opts.clearCache) {
+					cb(null, res);
+				}
+				return self.manager.clearCache([res.path])
+					.then(function () {
+						cb(null, res);
+					});
+			})
+			.catch(cb);
 	});
 };
 

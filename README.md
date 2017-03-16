@@ -24,7 +24,10 @@ var upload = multer({
 		// optional custom filename generator
 		generateFilename: function generateFilename (file, req) {
 			return Math.random() + path.extname(file.originalname);
-		}
+		},
+
+		//optional parameter for cache cleaning on cdn side
+		clearCache: true
 	})
 });
 ```
