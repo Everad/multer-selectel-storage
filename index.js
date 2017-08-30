@@ -16,6 +16,7 @@ Storage.prototype._handleFile = function _handleFile (req, file, cb) {
 	var cdnContainer = this.opts.container;
 	var generateFilename = this.opts.generateFilename || generateDefaultFilename;
 	var baseUrl = this.opts.baseUrl;
+	var extend = this.opts.extend || function (x) { return x; }
 	var chunks = [];
 	var self = this;
 
@@ -30,10 +31,10 @@ Storage.prototype._handleFile = function _handleFile (req, file, cb) {
 		var filename = generateFilename(file, req);
 		self.manager.uploadFile(content, path.join(cdnContainer, filename))
 			.then(function () {
-				var res = {
+				var res = extend({
 					path: baseUrl + filename,
 					size: content.length
-				};
+				}, content);
 				if (!self.opts.clearCache) {
 					cb(null, res);
 				}
