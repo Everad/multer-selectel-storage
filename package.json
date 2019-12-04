@@ -15,6 +15,6 @@
   "author": "Egor Gumenyuk <boo1ean0807@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "node-selectel-manager": "git+https://git@github.com/Everad/selectel-manager.git"
+    "node-selectel-manager": "git+https://git@github.com/Everad/selectel-manager.git#5ec069a74bcf678bdeb6adc9a909c0d2a332d7e5"
   }
 }
